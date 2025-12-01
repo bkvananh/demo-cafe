@@ -10,42 +10,42 @@ const INITIAL_PRODUCTS = [
         name: "Phin Sữa Đá Truyền Thống", 
         price: 29000, 
         category: "phin", 
-        img: "https://images.unsplash.com/photo-1596545722210-91775796a32d?q=80&w=800&auto=format&fit=crop" 
+        img: "./image/products/phin-da.jpg" 
     },
     { 
         id: 2, 
         name: "Phin Đen Đá", 
         price: 25000, 
         category: "phin", 
-        img: "https://images.unsplash.com/photo-1628266205562-349f2b8449c2?q=80&w=800&auto=format&fit=crop" 
+        img: "./image/products/phin-da.jpg" 
     },
     { 
         id: 3, 
         name: "Latte Art Hạnh Nhân", 
         price: 49000, 
         category: "espresso", 
-        img: "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?q=80&w=800&auto=format&fit=crop" 
+        img: "./image/products/latte.jpg" 
     },
     { 
         id: 4, 
         name: "Cappuccino Cinnamon", 
         price: 49000, 
         category: "espresso", 
-        img: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=800&auto=format&fit=crop" 
+        img: "./image/products/hat-cf.jpg" 
     },
     { 
         id: 5, 
         name: "Cold Brew Mộc Vị", 
         price: 55000, 
         category: "cold_brew", 
-        img: "https://images.unsplash.com/photo-1517701604599-bb29b5c7fa5b?q=80&w=800&auto=format&fit=crop" 
+        img: "./image/products/cold-brew.jpg" 
     },
     { 
         id: 6, 
         name: "Hạt Arabica Cầu Đất (250g)", 
         price: 120000, 
         category: "packaged", 
-        img: "https://images.unsplash.com/photo-1611854779393-1b2ae9d5af1d?q=80&w=800&auto=format&fit=crop" 
+        img: "./image/products/cold-brew.jpg" 
     }
 ];
 
