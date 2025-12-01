@@ -2,75 +2,99 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Quản Lý Sản Phẩm</title>
+    <title>Quản Lý Món - Admin</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background: #f4f4f4; }
-        .sidebar { width: 250px; background: var(--primary); color: white; height: 100vh; position: fixed; padding: 20px; }
-        .sidebar a { color: white; display: block; padding: 10px; margin-bottom: 5px; }
-        .sidebar a.active { background: var(--accent); }
-        .main-content { margin-left: 250px; padding: 40px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        th { background: var(--bg-alt); }
+        body { background: #f4f6f8; min-height: 100vh; }
+        #admin-sidebar { width: 260px; height: 100vh; background: var(--primary); position: fixed; top: 0; left: 0; z-index: 100; }
+        .sidebar-inner { padding: 20px; height: 100%; display: flex; flex-direction: column; color: white; }
+        .admin-menu a { display: block; padding: 12px; color: rgba(255,255,255,0.8); margin-bottom: 5px; }
+        .admin-menu a.active { background: var(--accent); color: white; font-weight: bold; border-radius: 6px; }
+        .admin-bottom { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .admin-bottom a { display: block; padding: 10px; text-align: center; color: white; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
+        
+        .main-content { margin-left: 260px; padding: 40px; }
+        
+        /* Form & Table */
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .form-row { display: flex; gap: 15px; margin-top: 15px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; }
+        button.btn-add { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f9f9f9; }
     </style>
     <script>
         if(localStorage.getItem('isAdmin') !== 'true') window.location.href = 'admin-portal-v2.html';
     </script>
 </head>
 <body>
-    
+
+    <div id="admin-sidebar"></div>
 
     <div class="main-content">
-        <h2>Danh Sách Món</h2>
-        
-        <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
-            <h4>Thêm Món Mới</h4>
-            <input type="text" id="name" placeholder="Tên món" style="padding: 8px;">
-            <input type="number" id="price" placeholder="Giá" style="padding: 8px;">
-            <select id="cat" style="padding: 8px;">
-                <option value="phin">Phin</option>
-                <option value="espresso">Espresso</option>
-                <option value="cold_brew">Cold Brew</option>
-            </select>
-            <input type="text" id="img" placeholder="Link ảnh (Copy từ Google/Unsplash)" style="padding: 8px; width: 300px;">
-            <button onclick="handleAdd()" class="btn-primary" style="border:none; cursor:pointer;">Thêm</button>
+        <div class="card">
+            <h2 style="color: var(--primary);">☕ Thêm Món Mới</h2>
+            <div class="form-row">
+                <input type="text" id="name" placeholder="Tên món (VD: Bạc Xỉu)">
+                <input type="number" id="price" placeholder="Giá (VD: 29000)">
+                <select id="cat">
+                    <option value="phin">Phin</option>
+                    <option value="espresso">Espresso</option>
+                    <option value="cold_brew">Cold Brew</option>
+                    <option value="packaged">Đóng gói</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <input type="text" id="img" placeholder="Link ảnh (Copy URL ảnh trên mạng)">
+                <button class="btn-add" onclick="handleAdd()">+ THÊM NGAY</button>
+            </div>
         </div>
 
-        <table>
-            <thead><tr><th>Ảnh</th><th>Tên</th><th>Giá</th><th>Loại</th><th>Hành động</th></tr></thead>
-            <tbody id="tbody"></tbody>
-        </table>
+        <div class="card">
+            <h3>Danh sách món hiện tại</h3>
+            <table>
+                <thead><tr><th>Ảnh</th><th>Tên món</th><th>Giá</th><th>Danh mục</th><th>Hành động</th></tr></thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
     </div>
 
     <script src="js/db.js"></script>
+    <script src="js/components.js"></script>
     <script>
         function render() {
             const list = getProducts();
             document.getElementById('tbody').innerHTML = list.map(p => `
                 <tr>
-                    <td><img src="${p.img}" height="50"></td>
-                    <td>${p.name}</td>
-                    <td>${p.price.toLocaleString()}</td>
-                    <td>${p.category}</td>
-                    <td><button onclick="handleDel(${p.id})" style="color:red; cursor:pointer; border:none; background:none;">Xóa</button></td>
+                    <td><img src="${p.img}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td style="color: var(--accent); font-weight:bold;">${p.price.toLocaleString()} đ</td>
+                    <td><span style="background:#eee; padding:4px 8px; border-radius:4px; font-size:0.8rem;">${p.category}</span></td>
+                    <td><button onclick="handleDel(${p.id})" style="color:red; background:none; border:none; cursor:pointer;">Xóa</button></td>
                 </tr>
             `).join('');
         }
+        
         function handleAdd() {
             const name = document.getElementById('name').value;
             const price = document.getElementById('price').value;
             const cat = document.getElementById('cat').value;
-            const img = document.getElementById('img').value || 'https://placehold.co/100x100?text=Coffee'; // Ảnh mặc định nếu trống
+            const img = document.getElementById('img').value || 'https://placehold.co/100?text=Coffee';
             
             if(name && price) {
                 addProduct({ name, price: Number(price), category: cat, img });
                 render();
-            }
+                alert('✅ Đã thêm món: ' + name);
+                document.getElementById('name').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('img').value = '';
+            } else { alert('Vui lòng nhập Tên và Giá!'); }
         }
-        function handleDel(id) {
-            if(confirm('Xóa?')) { deleteProduct(id); render(); }
-        }
+
+        function handleDel(id) { if(confirm('Xóa món này?')) { deleteProduct(id); render(); } }
+        
         render();
     </script>
 </body>
