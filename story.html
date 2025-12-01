@@ -2,32 +2,28 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Về Chúng Tôi</title>
+    <title>Tin Tức</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div style="height: 400px; background: url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1920') center/cover;">
-        <div style="height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
-            <h1 style="color: white; font-size: 3.5rem;">Hành Trình Di Sản</h1>
-        </div>
+    <div class="container">
+        <h2 class="section-title">Tin Tức & Sự Kiện</h2>
+        <div id="blog-grid" style="display:grid; grid-template-columns:1fr; gap:30px; max-width:800px; margin:0 auto;"></div>
     </div>
-
-    <div class="container" style="max-width: 800px;">
-        <p style="font-size: 1.2rem; text-align: justify; margin-bottom: 30px;">
-            <span style="font-size: 3rem; float: left; line-height: 0.8; padding-right: 10px; color: var(--accent);">C</span>
-            húng tôi bắt đầu hành trình từ năm 1999. Với niềm tin mãnh liệt rằng hạt cà phê Việt Nam xứng đáng có một vị trí trang trọng trên bản đồ thế giới, Coffee Chain đã không ngừng nỗ lực để mang đến những tách cà phê chuẩn vị nhất.
-        </p>
-        
-        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1000" style="width: 100%; border-radius: 8px; margin-bottom: 40px;">
-
-        <h3>Giá Trị Cốt Lõi</h3>
-        <ul style="margin-top: 20px; font-size: 1.1rem;">
-            <li style="margin-bottom: 10px;">☕ <strong>Chất lượng:</strong> Kiểm soát từ nông trại đến tách cà phê.</li>
-            <li style="margin-bottom: 10px;">❤️ <strong>Tận tâm:</strong> Khách hàng là trung tâm của mọi hoạt động.</li>
-            <li style="margin-bottom: 10px;">🌿 <strong>Bền vững:</strong> Cam kết bảo vệ môi trường và hỗ trợ nông dân.</li>
-        </ul>
-    </div>
-
+    <script src="js/db.js"></script>
     <script src="js/components.js"></script>
+    <script>
+        const posts = getData(BLOG_KEY);
+        document.getElementById('blog-grid').innerHTML = posts.length ? posts.map(p => `
+            <div style="display:flex; gap:20px; background:white; padding:20px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                <img src="${p.img}" style="width:200px; height:150px; object-fit:cover;">
+                <div>
+                    <small style="color:#888;">📅 ${p.date}</small>
+                    <h3>${p.title}</h3>
+                    <p>${p.desc}</p>
+                </div>
+            </div>
+        `).join('') : '<p>Chưa có bài viết.</p>';
+    </script>
 </body>
 </html>
