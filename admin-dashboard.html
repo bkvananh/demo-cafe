@@ -2,21 +2,35 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Hộp Thư</title>
+    <title>Hộp Thư - Admin</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background: #f4f4f4; }
-        .sidebar { width: 250px; background: var(--primary); color: white; height: 100vh; position: fixed; padding: 20px; }
-        .sidebar a { color: white; display: block; padding: 12px; margin-bottom: 5px; border-radius: 4px; }
-        .sidebar a.active, .sidebar a:hover { background: var(--accent); }
-        .main-content { margin-left: 250px; padding: 40px; }
+        /* CSS LAYOUT ADMIN (Bắt buộc có) */
+        body { background: #f4f6f8; min-height: 100vh; }
+        
+        /* Sidebar container */
+        #admin-sidebar {
+            width: 260px; height: 100vh; background: var(--primary); color: white;
+            position: fixed; top: 0; left: 0; z-index: 100;
+            display: flex; flex-direction: column;
+        }
+        .sidebar-inner { padding: 20px; height: 100%; display: flex; flex-direction: column; }
+        .admin-logo { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .admin-menu a { display: block; padding: 12px 15px; color: rgba(255,255,255,0.8); border-radius: 6px; margin-bottom: 5px; text-decoration: none; transition: 0.2s; }
+        .admin-menu a:hover, .admin-menu a.active { background: var(--accent); color: white; font-weight: bold; }
+        .admin-bottom { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .btn-view { background: #4CAF50 !important; color: white !important; margin-bottom: 10px; text-align: center; }
+        .btn-logout { background: #d32f2f !important; color: white !important; text-align: center; }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; padding: 40px; }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         
         /* Table Style */
-        .inbox-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .inbox-table th, .inbox-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        .inbox-table th { background: var(--bg-alt); font-weight: bold; color: var(--primary); }
-        .inbox-table tr:hover { background: #fafafa; }
-        .msg-content { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: #555; font-weight: 600; }
+        .msg-text { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #666; }
     </style>
     <script>
         if(localStorage.getItem('isAdmin') !== 'true') window.location.href = 'admin-portal-v2.html';
@@ -24,29 +38,32 @@
 </head>
 <body>
 
-    
+    <div id="admin-sidebar"></div>
 
     <div class="main-content">
-        <h2 class="section-title" style="text-align: left;">Hộp Thư Đến</h2>
-        <p style="margin-bottom: 20px;">Danh sách tin nhắn từ trang Liên hệ</p>
+        <div class="card">
+            <h2 style="color: var(--primary); margin-bottom: 10px;">📬 Hộp Thư Khách Hàng</h2>
+            <p style="color: #666;">Quản lý các liên hệ gửi từ website</p>
 
-        <table class="inbox-table">
-            <thead>
-                <tr>
-                    <th width="150">Ngày gửi</th>
-                    <th width="150">Họ tên</th>
-                    <th width="200">Email/SĐT</th>
-                    <th>Nội dung</th>
-                    <th width="100">Hành động</th>
-                </tr>
-            </thead>
-            <tbody id="msg-body">
-                </tbody>
-        </table>
-        <p id="empty-msg" style="text-align: center; margin-top: 20px; display: none;">Chưa có tin nhắn nào.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ngày gửi</th>
+                        <th>Khách hàng</th>
+                        <th>Email / SĐT</th>
+                        <th>Nội dung</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <tbody id="msg-body">
+                    </tbody>
+            </table>
+            <p id="empty-msg" style="text-align: center; margin-top: 30px; display: none; color: #999;">Hộp thư trống.</p>
+        </div>
     </div>
 
     <script src="js/db.js"></script>
+    <script src="js/components.js"></script>
     <script>
         function renderMessages() {
             const list = getContacts();
@@ -58,21 +75,18 @@
                 return;
             }
 
-            // Sắp xếp tin nhắn mới nhất lên đầu
-            list.sort((a, b) => b.id - a.id);
+            list.sort((a, b) => b.id - a.id); // Mới nhất lên đầu
 
             tbody.innerHTML = list.map(c => `
                 <tr>
-                    <td style="font-size: 0.9rem; color: #888;">${c.date || 'Vừa xong'}</td>
+                    <td style="color:#888; font-size:0.9rem;">${c.date || 'N/A'}</td>
                     <td><strong>${c.name}</strong></td>
                     <td>
                         <div>${c.email}</div>
-                        <div style="font-size: 0.85rem; color: #666;">${c.phone}</div>
+                        <small style="color:#888">${c.phone}</small>
                     </td>
-                    <td><div class="msg-content" title="${c.message}">${c.message}</div></td>
-                    <td>
-                        <button onclick="handleDelMsg(${c.id})" style="color: #d9534f; border: none; background: none; cursor: pointer; font-weight: bold;">Xóa</button>
-                    </td>
+                    <td><div class="msg-text" title="${c.message}">${c.message}</div></td>
+                    <td><button onclick="handleDelMsg(${c.id})" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">Xóa</button></td>
                 </tr>
             `).join('');
         }
@@ -83,7 +97,6 @@
                 renderMessages();
             }
         }
-
         renderMessages();
     </script>
 </body>
