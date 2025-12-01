@@ -5,106 +5,78 @@
     <title>Quản Lý Sản Phẩm</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .admin-layout { display: flex; min-height: 100vh; }
-        .sidebar { width: 250px; background: var(--primary); color: white; padding: 20px; }
-        .sidebar a { display: block; padding: 10px; color: white; margin-bottom: 5px; }
+        body { background: #f4f4f4; }
+        .sidebar { width: 250px; background: var(--primary); color: white; height: 100vh; position: fixed; padding: 20px; }
+        .sidebar a { color: white; display: block; padding: 10px; margin-bottom: 5px; }
         .sidebar a.active { background: var(--accent); }
-        .content { flex: 1; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        .main-content { margin-left: 250px; padding: 40px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
         th { background: var(--bg-alt); }
-        .form-add { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .form-add input, .form-add select { padding: 8px; margin-right: 10px; border: 1px solid #ccc; }
     </style>
     <script>
-        // GATEKEEPER
         if(localStorage.getItem('isAdmin') !== 'true') window.location.href = 'admin-portal-v2.html';
     </script>
 </head>
 <body>
-    <div class="admin-layout">
-        <div class="sidebar">
-            <h3>Admin Panel</h3>
-            <br>
-            <a href="admin-products.html" class="active">Sản Phẩm</a>
-            <a href="#" onclick="logout()">Đăng Xuất</a>
-        </div>
-        <div class="content">
-            <h2>Quản Lý Sản Phẩm</h2>
-            
-            <div class="form-add">
-                <h4>Thêm Món Mới</h4>
-                <input type="text" id="newName" placeholder="Tên món">
-                <input type="number" id="newPrice" placeholder="Giá">
-                <select id="newCat">
-                    <option value="phin">Phin</option>
-                    <option value="espresso">Espresso</option>
-                    <option value="cold_brew">Cold Brew</option>
-                </select>
-                <input type="text" id="newImg" placeholder="Link ảnh (images/products/...)">
-                <button class="btn-primary" onclick="handleAdd()">Thêm</button>
-            </div>
+    <div class="sidebar">
+        <h3>Admin Panel</h3>
+        <br>
+        <a href="admin-products.html" class="active">Sản phẩm</a>
+        <a href="#" onclick="localStorage.removeItem('isAdmin'); window.location.href='index.html'">Đăng xuất</a>
+    </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Ảnh</th>
-                        <th>Tên Món</th>
-                        <th>Giá</th>
-                        <th>Danh mục</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    </tbody>
-            </table>
+    <div class="main-content">
+        <h2>Danh Sách Món</h2>
+        
+        <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
+            <h4>Thêm Món Mới</h4>
+            <input type="text" id="name" placeholder="Tên món" style="padding: 8px;">
+            <input type="number" id="price" placeholder="Giá" style="padding: 8px;">
+            <select id="cat" style="padding: 8px;">
+                <option value="phin">Phin</option>
+                <option value="espresso">Espresso</option>
+                <option value="cold_brew">Cold Brew</option>
+            </select>
+            <input type="text" id="img" placeholder="Link ảnh (Copy từ Google/Unsplash)" style="padding: 8px; width: 300px;">
+            <button onclick="handleAdd()" class="btn-primary" style="border:none; cursor:pointer;">Thêm</button>
         </div>
+
+        <table>
+            <thead><tr><th>Ảnh</th><th>Tên</th><th>Giá</th><th>Loại</th><th>Hành động</th></tr></thead>
+            <tbody id="tbody"></tbody>
+        </table>
     </div>
 
     <script src="js/db.js"></script>
     <script>
-        function renderTable() {
-            const products = getProducts();
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = products.map(p => `
+        function render() {
+            const list = getProducts();
+            document.getElementById('tbody').innerHTML = list.map(p => `
                 <tr>
-                    <td>${p.id}</td>
-                    <td><img src="${p.img}" height="40"></td>
+                    <td><img src="${p.img}" height="50"></td>
                     <td>${p.name}</td>
-                    <td>${p.price.toLocaleString()} đ</td>
+                    <td>${p.price.toLocaleString()}</td>
                     <td>${p.category}</td>
-                    <td><button onclick="handleDelete(${p.id})" style="color:red; border:none; cursor:pointer;">Xóa</button></td>
+                    <td><button onclick="handleDel(${p.id})" style="color:red; cursor:pointer; border:none; background:none;">Xóa</button></td>
                 </tr>
             `).join('');
         }
-
         function handleAdd() {
-            const name = document.getElementById('newName').value;
-            const price = document.getElementById('newPrice').value;
-            const cat = document.getElementById('newCat').value;
-            const img = document.getElementById('newImg').value;
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const cat = document.getElementById('cat').value;
+            const img = document.getElementById('img').value || 'https://placehold.co/100x100?text=Coffee'; // Ảnh mặc định nếu trống
             
-            if(!name || !price) return alert("Nhập đủ thông tin!");
-
-            addProduct({ name, price: Number(price), category: cat, img });
-            renderTable();
-            alert("Đã thêm!");
-        }
-
-        function handleDelete(id) {
-            if(confirm("Xóa món này?")) {
-                deleteProduct(id);
-                renderTable();
+            if(name && price) {
+                addProduct({ name, price: Number(price), category: cat, img });
+                render();
             }
         }
-
-        function logout() {
-            localStorage.removeItem('isAdmin');
-            window.location.href = 'index.html';
+        function handleDel(id) {
+            if(confirm('Xóa?')) { deleteProduct(id); render(); }
         }
-
-        renderTable();
+        render();
     </script>
 </body>
 </html>
