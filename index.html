@@ -2,72 +2,30 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Trang Chủ - Coffee Chain</title>
+    <title>Trang Chủ</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* CSS riêng cho trang chủ để xử lý ảnh nền online */
-        .hero-banner { 
-            height: 600px; 
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover; 
-            background-position: center; 
-            display: flex; align-items: center; justify-content: center; 
-            text-align: center; color: white;
-        }
-        .story-section { background: var(--bg-alt); padding: 80px 0; }
-        .story-box { display: flex; align-items: center; gap: 50px; }
-        .story-img img { border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-    </style>
 </head>
 <body>
-
-    <section class="hero-banner">
-        <div class="hero-content">
-            <h1 style="font-size: 4rem; margin-bottom: 20px; color: #fff;">Di Sản Cà Phê Việt</h1>
-            <p style="font-size: 1.2rem; margin-bottom: 30px; color: #f0f0f0;">Đậm đà hương vị - Tận tâm phục vụ</p>
+    <div style="height:600px; background:linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=1920'); background-size:cover; display:flex; align-items:center; justify-content:center; color:white; text-align:center;">
+        <div>
+            <h1 style="font-size:4rem; margin-bottom:20px;">Hương Vị Di Sản</h1>
             <a href="menu.html" class="btn-primary">XEM THỰC ĐƠN</a>
         </div>
-    </section>
-
-    <section class="story-section">
-        <div class="container">
-            <div class="story-box">
-                <div class="story-text" style="flex: 1;">
-                    <h2 class="section-title" style="text-align: left;">Câu Chuyện Của Chúng Tôi</h2>
-                    <p>Khởi nguồn từ năm 1999 tại vùng đất đỏ bazan, chúng tôi mang trong mình sứ mệnh gìn giữ và nâng tầm hạt cà phê Robusta Việt Nam.</p>
-                    <br>
-                    <a href="story.html" class="btn-outline">ĐỌC THÊM</a>
-                </div>
-                <div class="story-img" style="flex: 1;">
-                    <img src="./image/story/about-home.jpg" alt="Coffee Story">
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <div class="container">
-        <h2 class="section-title">Món Được Yêu Thích</h2>
-        <span class="section-subtitle">Những hương vị làm nên tên tuổi Coffee Chain</span>
-        
-        <div id="featured-grid" class="product-grid">
-            </div>
-        
-        <div style="text-align: center; margin-top: 50px;">
-            <a href="menu.html" class="btn-primary">XEM TẤT CẢ MENU</a>
-        </div>
+        <h2 class="section-title">Món Nổi Bật</h2>
+        <div id="featured" class="product-grid"></div>
     </div>
 
     <script src="js/db.js"></script>
     <script src="js/components.js"></script>
     <script>
-        // Lấy 4 món đầu tiên để hiển thị
-        const featured = getProducts().slice(0, 4);
-        document.getElementById('featured-grid').innerHTML = featured.map(p => `
-            <div class="product-card">
-                <div class="product-img-box">
-                    <img src="${p.img}" alt="${p.name}">
-                </div>
-                <div class="product-info">
+        const list = getData(PRODUCTS_KEY).slice(0, 4);
+        document.getElementById('featured').innerHTML = list.map(p => `
+            <div class="card">
+                <img src="${p.img}">
+                <div class="card-body">
                     <h4>${p.name}</h4>
                     <span class="price">${p.price.toLocaleString()} đ</span>
                 </div>
