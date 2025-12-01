@@ -4,7 +4,7 @@ function loadComponents() {
     const headerHTML = `
     <header>
         <div class="header-inner">
-            <a href="index.html" class="logo"><img src="images/logo.png" alt="Coffee Chain"></a>
+            <a href="index.html" class="logo"><img src="./images/logo.png" alt="Coffee Chain"></a>
             <nav>
                 <a href="index.html">Trang chủ</a>
                 <a href="menu.html">Thực đơn</a>
