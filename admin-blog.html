@@ -2,110 +2,46 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Quản Lý Blog - Admin</title>
+    <title>Quản Lý Blog</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body { background: #f4f6f8; min-height: 100vh; }
-        #admin-sidebar { width: 260px; height: 100vh; background: var(--primary); position: fixed; top: 0; left: 0; z-index: 100; }
-        .sidebar-inner { padding: 20px; height: 100%; display: flex; flex-direction: column; color: white; }
-        .admin-menu a { display: block; padding: 12px; color: rgba(255,255,255,0.8); margin-bottom: 5px; }
-        .admin-menu a.active { background: var(--accent); color: white; font-weight: bold; border-radius: 6px; }
-        .admin-bottom { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .admin-bottom a { display: block; padding: 10px; text-align: center; color: white; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
-        
-        .main-content { margin-left: 260px; padding: 40px; }
-        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; display: block; }
-        label { font-weight: bold; margin-bottom: 5px; display: block; color: var(--primary); }
-        button.btn-post { background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        .post-item { display: flex; gap: 20px; border-bottom: 1px solid #eee; padding: 15px 0; }
-        .post-img { width: 100px; height: 70px; object-fit: cover; border-radius: 5px; }
-    </style>
-    <script>
-        // Kiểm tra xem đã đăng nhập chưa
-        const isLogin = localStorage.getItem('isAdmin');
-
-        // Nếu chưa có token 'isAdmin' hoặc token không phải 'true'
-        if (!isLogin || isLogin !== 'true') {
-            alert('⛔ Bạn không có quyền truy cập! Vui lòng đăng nhập.');
-            window.location.href = 'admin-portal-v2.html'; // Đá về trang đăng nhập
-        }
-    </script>
+    <script src="js/admin.js"></script>
+    <script>checkGatekeeper();</script>
 </head>
-<body>
-
+<body id="admin-body">
     <div id="admin-sidebar"></div>
-
-    <div class="main-content">
-        <div class="card">
-            <h2 style="color: var(--primary); margin-bottom: 20px;">📰 Đăng Tin Tức Mới</h2>
-            
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                <div>
-                    <label>Tiêu đề bài viết</label>
-                    <input type="text" id="title" placeholder="VD: Khuyến mãi mùa Giáng Sinh...">
-                </div>
-                <div>
-                    <label>Ngày đăng</label>
-                    <input type="date" id="date">
-                </div>
-            </div>
-            
-            <label>Link ảnh (URL)</label>
-            <input type="text" id="img" placeholder="https://...">
-            
-            <label>Mô tả ngắn</label>
-            <textarea id="desc" rows="3" placeholder="Tóm tắt nội dung..."></textarea>
-            
-            <button class="btn-post" onclick="handlePost()">ĐĂNG BÀI VIẾT</button>
+    <div id="admin-content">
+        <h2>Quản Lý Bài Viết</h2>
+        <div class="form-box">
+            <input id="title" placeholder="Tiêu đề">
+            <input id="date" type="date">
+            <input id="img" placeholder="Link ảnh">
+            <textarea id="desc" placeholder="Nội dung..."></textarea>
+            <button onclick="add()" class="btn-primary">ĐĂNG BÀI</button>
         </div>
-
-        <div class="card">
-            <h3>Danh sách bài viết</h3>
-            <div id="blog-list"></div>
-        </div>
+        <table class="admin-table">
+            <tbody id="list"></tbody>
+        </table>
     </div>
-
     <script src="js/db.js"></script>
     <script src="js/components.js"></script>
     <script>
-        // Set ngày hôm nay
-        document.getElementById('date').valueAsDate = new Date();
-
         function render() {
-            const list = getPosts();
-            document.getElementById('blog-list').innerHTML = list.map(p => `
-                <div class="post-item">
-                    <img src="${p.img}" class="post-img">
-                    <div style="flex:1;">
-                        <h4 style="margin:0 0 5px 0;">${p.title}</h4>
-                        <small style="color:#888;">📅 ${p.date}</small>
-                        <p style="color:#666; font-size:0.9rem; margin-top:5px;">${p.desc}</p>
-                    </div>
-                    <button onclick="handleDel(${p.id})" style="color:red; background:none; border:none; cursor:pointer; height:fit-content;">Xóa</button>
-                </div>
-            `).join('');
+            document.getElementById('list').innerHTML = getData(BLOG_KEY).map(p => `
+                <tr>
+                    <td><img src="${p.img}" style="width:60px;"></td>
+                    <td><b>${p.title}</b><br>${p.desc}</td>
+                    <td>${p.date}</td>
+                    <td><button onclick="del(${p.id})" style="color:red; border:none; background:none; cursor:pointer;">Xóa</button></td>
+                </tr>`).join('');
         }
-
-        function handlePost() {
+        function add() {
             const title = document.getElementById('title').value;
-            const date = document.getElementById('date').value;
-            const img = document.getElementById('img').value || 'https://placehold.co/600x400?text=News';
             const desc = document.getElementById('desc').value;
-
-            if(title && desc) {
-                addPost({ title, date, img, desc });
-                render();
-                alert('✅ Đã đăng bài!');
-                document.getElementById('title').value = '';
-                document.getElementById('desc').value = '';
-                document.getElementById('img').value = '';
-            } else { alert('Nhập thiếu thông tin!'); }
+            const date = document.getElementById('date').value;
+            const img = document.getElementById('img').value || 'https://placehold.co/100';
+            if(title) { addData(BLOG_KEY, {title, desc, date, img}); render(); }
         }
-
-        function handleDel(id) { if(confirm('Xóa bài này?')) { deletePost(id); render(); } }
+        function del(id) { if(confirm('Xóa?')) { deleteData(BLOG_KEY, id); render(); } }
         render();
     </script>
 </body>
