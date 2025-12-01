@@ -1,111 +1,37 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    
     <meta charset="UTF-8">
-    <title>Hộp Thư - Admin</title>
+    <title>Hộp Thư</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* CSS LAYOUT ADMIN (Bắt buộc có) */
-        body { background: #f4f6f8; min-height: 100vh; }
-        
-        /* Sidebar container */
-        #admin-sidebar {
-            width: 260px; height: 100vh; background: var(--primary); color: white;
-            position: fixed; top: 0; left: 0; z-index: 100;
-            display: flex; flex-direction: column;
-        }
-        .sidebar-inner { padding: 20px; height: 100%; display: flex; flex-direction: column; }
-        .admin-logo { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .admin-menu a { display: block; padding: 12px 15px; color: rgba(255,255,255,0.8); border-radius: 6px; margin-bottom: 5px; text-decoration: none; transition: 0.2s; }
-        .admin-menu a:hover, .admin-menu a.active { background: var(--accent); color: white; font-weight: bold; }
-        .admin-bottom { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
-        .btn-view { background: #4CAF50 !important; color: white !important; margin-bottom: 10px; text-align: center; }
-        .btn-logout { background: #d32f2f !important; color: white !important; text-align: center; }
-
-        /* Main Content */
-        .main-content { margin-left: 260px; padding: 40px; }
-        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        
-        /* Table Style */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: #555; font-weight: 600; }
-        .msg-text { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #666; }
-    </style>
-    <script>
-        // Kiểm tra xem đã đăng nhập chưa
-        const isLogin = localStorage.getItem('isAdmin');
-
-        // Nếu chưa có token 'isAdmin' hoặc token không phải 'true'
-        if (!isLogin || isLogin !== 'true') {
-            alert('⛔ Bạn không có quyền truy cập! Vui lòng đăng nhập.');
-            window.location.href = 'admin-portal-v2.html'; // Đá về trang đăng nhập
-        }
-    </script>
+    <script src="js/admin.js"></script>
+    <script>checkGatekeeper();</script>
 </head>
-<body>
-
+<body id="admin-body">
     <div id="admin-sidebar"></div>
-
-    <div class="main-content">
-        <div class="card">
-            <h2 style="color: var(--primary); margin-bottom: 10px;">📬 Hộp Thư Khách Hàng</h2>
-            <p style="color: #666;">Quản lý các liên hệ gửi từ website</p>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Ngày gửi</th>
-                        <th>Khách hàng</th>
-                        <th>Email / SĐT</th>
-                        <th>Nội dung</th>
-                        <th>Xóa</th>
-                    </tr>
-                </thead>
-                <tbody id="msg-body">
-                    </tbody>
-            </table>
-            <p id="empty-msg" style="text-align: center; margin-top: 30px; display: none; color: #999;">Hộp thư trống.</p>
-        </div>
+    <div id="admin-content">
+        <h2>Hộp Thư Khách Hàng</h2>
+        <table class="admin-table">
+            <thead><tr><th>Tên</th><th>Liên hệ</th><th>Nội dung</th><th>Ngày</th><th>Xóa</th></tr></thead>
+            <tbody id="list"></tbody>
+        </table>
+        <p id="empty" style="text-align:center; margin-top:20px; display:none;">Chưa có tin nhắn.</p>
     </div>
-
     <script src="js/db.js"></script>
     <script src="js/components.js"></script>
     <script>
-        function renderMessages() {
-            const list = getContacts();
-            const tbody = document.getElementById('msg-body');
-            
-            if(list.length === 0) {
-                document.getElementById('empty-msg').style.display = 'block';
-                tbody.innerHTML = '';
-                return;
-            }
-
-            list.sort((a, b) => b.id - a.id); // Mới nhất lên đầu
-
-            tbody.innerHTML = list.map(c => `
-                <tr>
-                    <td style="color:#888; font-size:0.9rem;">${c.date || 'N/A'}</td>
-                    <td><strong>${c.name}</strong></td>
-                    <td>
-                        <div>${c.email}</div>
-                        <small style="color:#888">${c.phone}</small>
-                    </td>
-                    <td><div class="msg-text" title="${c.message}">${c.message}</div></td>
-                    <td><button onclick="handleDelMsg(${c.id})" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">Xóa</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function handleDelMsg(id) {
-            if(confirm('Xóa tin nhắn này?')) {
-                deleteContact(id);
-                renderMessages();
-            }
-        }
-        renderMessages();
+        const list = getData(CONTACTS_KEY);
+        if(!list.length) document.getElementById('empty').style.display = 'block';
+        document.getElementById('list').innerHTML = list.map(c => `
+            <tr>
+                <td>${c.name}</td>
+                <td>${c.contact}</td>
+                <td>${c.message}</td>
+                <td>${c.date}</td>
+                <td><button onclick="del(${c.id})" style="color:red; border:none; background:none; cursor:pointer;">Xóa</button></td>
+            </tr>`).join('');
+        
+        function del(id) { if(confirm('Xóa?')) { deleteData(CONTACTS_KEY, id); location.reload(); } }
     </script>
 </body>
 </html>
