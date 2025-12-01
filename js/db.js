@@ -17,7 +17,7 @@ const INITIAL_POSTS = [
         id: 1,
         title: "Khai trương chi nhánh Quận 1",
         date: "2025-10-20",
-        img: "images/blog/news1.jpg",
+        img: "./images/blog/news1.jpg",
         desc: "Ưu đãi mua 1 tặng 1 nhân dịp khai trương chi nhánh mới..."
     }
 ];
