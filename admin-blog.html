@@ -24,7 +24,14 @@
         .post-img { width: 100px; height: 70px; object-fit: cover; border-radius: 5px; }
     </style>
     <script>
-        if(localStorage.getItem('isAdmin') !== 'true') window.location.href = 'admin-portal-v2.html';
+        // Kiểm tra xem đã đăng nhập chưa
+        const isLogin = localStorage.getItem('isAdmin');
+
+        // Nếu chưa có token 'isAdmin' hoặc token không phải 'true'
+        if (!isLogin || isLogin !== 'true') {
+            alert('⛔ Bạn không có quyền truy cập! Vui lòng đăng nhập.');
+            window.location.href = 'admin-portal-v2.html'; // Đá về trang đăng nhập
+        }
     </script>
 </head>
 <body>
