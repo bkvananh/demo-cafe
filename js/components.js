@@ -1,27 +1,43 @@
 /* file: js/components.js */
 document.addEventListener('DOMContentLoaded', () => {
-    // Kiểm tra xem trang hiện tại là trang KHÁCH hay trang ADMIN
-    const isAdminPage = window.location.pathname.includes('admin-');
+    // 1. Kiểm tra xem có thẻ Sidebar Admin không
+    const adminSidebarContainer = document.getElementById('admin-sidebar');
     
-    if (isAdminPage) {
-        loadAdminSidebar();
+    if (adminSidebarContainer) {
+        loadAdminSidebar(adminSidebarContainer);
     } else {
+        // Nếu không phải trang Admin thì load Header/Footer cho khách
         loadHeader();
         loadFooter();
     }
 });
 
-/* --- 1. HEADER CHO KHÁCH HÀNG --- */
-function loadHeader() {
-    // Kiểm tra xem có đang đăng nhập Admin không?
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
-    
-    // Nút "Vào Admin" (Chỉ hiện khi đã đăng nhập)
-    const adminButton = isAdmin 
-        ? `<a href="admin-products.html" style="color: red; font-weight: bold; border: 1px solid red; padding: 5px 10px; border-radius: 4px; margin-left: 15px;">🔧 Quản trị</a>` 
-        : '';
+/* --- SIDEBAR CHO ADMIN --- */
+function loadAdminSidebar(container) {
+    const sidebarHTML = `
+    <div class="sidebar-inner">
+        <h3 class="admin-logo">Admin Panel</h3>
+        <div class="admin-menu">
+            <a href="admin-dashboard.html">📬 Hộp thư đến</a>
+            <a href="admin-products.html">☕ Quản lý Món</a>
+            <a href="admin-blog.html">📰 Quản lý Bài viết</a>
+        </div>
+        <div class="admin-bottom">
+            <a href="index.html" target="_blank" class="btn-view">👁️ Xem Web</a>
+            <a href="#" onclick="handleLogout()" class="btn-logout">🚪 Đăng xuất</a>
+        </div>
+    </div>`;
 
-    const headerHTML = `
+    container.innerHTML = sidebarHTML;
+    highlightActiveLink();
+}
+
+/* --- HEADER/FOOTER CHO KHÁCH (Giữ nguyên) --- */
+function loadHeader() {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    const adminBtn = isAdmin ? `<a href="admin-dashboard.html" style="color:red; font-weight:bold; margin-left:15px;">🔧 Vào Admin</a>` : '';
+
+    document.body.insertAdjacentHTML('afterbegin', `
     <header>
         <div class="header-inner">
             <a href="index.html" class="logo">COFFEE CHAIN</a>
@@ -31,71 +47,29 @@ function loadHeader() {
                 <a href="blog.html">Tin tức</a>
                 <a href="story.html">Câu chuyện</a>
                 <a href="contact.html">Liên hệ</a>
-                ${adminButton} 
+                ${adminBtn}
             </nav>
         </div>
-    </header>`;
-
-    document.body.insertAdjacentHTML('afterbegin', headerHTML);
-    highlightActiveLink();
+    </header>`);
 }
 
-/* --- 2. FOOTER CHO KHÁCH HÀNG --- */
 function loadFooter() {
-    const footerHTML = `
+    document.body.insertAdjacentHTML('beforeend', `
     <footer>
         <div class="container" style="padding: 20px;">
-            <h3>COFFEE CHAIN</h3>
-            <p>Từ năm 1999 - Hương vị di sản Việt Nam</p>
-            <br>
-            <p style="font-size: 14px; opacity: 0.7;">&copy; 2025 Group 16 Multimedia Design. All rights reserved.</p>
+            <p>&copy; 2025 Coffee Chain Admin System.</p>
         </div>
-    </footer>`;
-
-    document.body.insertAdjacentHTML('beforeend', footerHTML);
+    </footer>`);
 }
 
-/* --- 3. SIDEBAR CHO ADMIN (MỚI) --- */
-function loadAdminSidebar() {
-    // Tìm thẻ div placeholder có class="admin-sidebar-placeholder" để chèn vào
-    // Hoặc chèn trực tiếp vào đầu body nếu cấu trúc CSS cho phép
-    
-    const sidebarHTML = `
-    <div class="sidebar">
-        <h3 style="margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px;">Admin Panel</h3>
-        
-        <a href="admin-dashboard.html">📬 Hộp thư khách hàng</a>
-        <a href="admin-products.html">☕ Quản lý Sản phẩm</a>
-        <a href="admin-blog.html">📰 Quản lý Bài viết</a>
-        
-        <div style="margin-top: 50px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
-            <a href="index.html" target="_blank" style="background: #4CAF50; color: white;">👁️ Xem Website</a>
-            <a href="#" onclick="handleLogout()" style="background: #d9534f; color: white;">🚪 Đăng xuất</a>
-        </div>
-    </div>`;
-
-    // Chèn Sidebar vào đầu trang Admin
-    document.body.insertAdjacentHTML('afterbegin', sidebarHTML);
-    
-    highlightActiveLink();
-}
-
-/* --- HÀM TIỆN ÍCH --- */
+/* --- TIỆN ÍCH --- */
 function highlightActiveLink() {
     const currentPath = window.location.pathname.split('/').pop();
-    // Chọn tất cả thẻ a trong nav (header) hoặc sidebar
-    const links = document.querySelectorAll('nav a, .sidebar a');
-    
-    links.forEach(link => {
-        const href = link.getAttribute('href');
-        // So sánh tương đối để tránh lỗi
-        if (href && href === currentPath) {
-            link.classList.add('active');
-        }
+    document.querySelectorAll('nav a, .admin-menu a').forEach(link => {
+        if (link.getAttribute('href') === currentPath) link.classList.add('active');
     });
 }
 
-// Hàm đăng xuất toàn cục
 function handleLogout() {
     localStorage.removeItem('isAdmin');
     window.location.href = 'index.html';
