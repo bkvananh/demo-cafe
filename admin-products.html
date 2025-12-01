@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Sản Phẩm</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background: var(--primary); color: white; padding: 20px; }
+        .sidebar a { display: block; padding: 10px; color: white; margin-bottom: 5px; }
+        .sidebar a.active { background: var(--accent); }
+        .content { flex: 1; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: var(--bg-alt); }
+        .form-add { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .form-add input, .form-add select { padding: 8px; margin-right: 10px; border: 1px solid #ccc; }
+    </style>
+    <script>
+        // GATEKEEPER
+        if(localStorage.getItem('isAdmin') !== 'true') window.location.href = 'admin-portal-v2.html';
+    </script>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <h3>Admin Panel</h3>
+            <br>
+            <a href="admin-products.html" class="active">Sản Phẩm</a>
+            <a href="#" onclick="logout()">Đăng Xuất</a>
+        </div>
+        <div class="content">
+            <h2>Quản Lý Sản Phẩm</h2>
+            
+            <div class="form-add">
+                <h4>Thêm Món Mới</h4>
+                <input type="text" id="newName" placeholder="Tên món">
+                <input type="number" id="newPrice" placeholder="Giá">
+                <select id="newCat">
+                    <option value="phin">Phin</option>
+                    <option value="espresso">Espresso</option>
+                    <option value="cold_brew">Cold Brew</option>
+                </select>
+                <input type="text" id="newImg" placeholder="Link ảnh (images/products/...)">
+                <button class="btn-primary" onclick="handleAdd()">Thêm</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ảnh</th>
+                        <th>Tên Món</th>
+                        <th>Giá</th>
+                        <th>Danh mục</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script>
+        function renderTable() {
+            const products = getProducts();
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td><img src="${p.img}" height="40"></td>
+                    <td>${p.name}</td>
+                    <td>${p.price.toLocaleString()} đ</td>
+                    <td>${p.category}</td>
+                    <td><button onclick="handleDelete(${p.id})" style="color:red; border:none; cursor:pointer;">Xóa</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function handleAdd() {
+            const name = document.getElementById('newName').value;
+            const price = document.getElementById('newPrice').value;
+            const cat = document.getElementById('newCat').value;
+            const img = document.getElementById('newImg').value;
+            
+            if(!name || !price) return alert("Nhập đủ thông tin!");
+
+            addProduct({ name, price: Number(price), category: cat, img });
+            renderTable();
+            alert("Đã thêm!");
+        }
+
+        function handleDelete(id) {
+            if(confirm("Xóa món này?")) {
+                deleteProduct(id);
+                renderTable();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isAdmin');
+            window.location.href = 'index.html';
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
