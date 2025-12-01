@@ -1,24 +1,51 @@
 /* file: js/db.js */
 const PRODUCTS_KEY = 'coffee_products';
 const BLOG_KEY = 'coffee_posts';
+const CONTACTS_KEY = 'coffee_contacts';
 
-// Dữ liệu mẫu ban đầu
+// Dữ liệu mẫu với ẢNH ONLINE (Unsplash) - Không lo lỗi ảnh nữa
 const INITIAL_PRODUCTS = [
-    { id: 1, name: "Phin Sữa Đá Đậm Vị", price: 29000, category: "phin", img: "images/products/phin-da.jpg" },
-    { id: 2, name: "Phin Đen Đá", price: 25000, category: "phin", img: "images/products/phin-da.jpg" },
-    { id: 3, name: "Latte Hạnh Nhân", price: 45000, category: "espresso", img: "images/products/latte.jpg" },
-    { id: 4, name: "Cappuccino", price: 45000, category: "espresso", img: "images/products/latte.jpg" },
-    { id: 5, name: "Cold Brew Truyền Thống", price: 50000, category: "cold_brew", img: "images/products/cold-brew.jpg" },
-    { id: 6, name: "Cà Phê Hạt Arabica (250g)", price: 120000, category: "packaged", img: "images/products/hat-cf.jpg" }
-];
-
-const INITIAL_POSTS = [
-    {
-        id: 1,
-        title: "Khai trương chi nhánh Quận 1",
-        date: "2025-10-20",
-        img: "./images/blog/news1.jpg",
-        desc: "Ưu đãi mua 1 tặng 1 nhân dịp khai trương chi nhánh mới..."
+    { 
+        id: 1, 
+        name: "Phin Sữa Đá Truyền Thống", 
+        price: 29000, 
+        category: "phin", 
+        img: "https://images.unsplash.com/photo-1596545722210-91775796a32d?q=80&w=800&auto=format&fit=crop" 
+    },
+    { 
+        id: 2, 
+        name: "Phin Đen Đá", 
+        price: 25000, 
+        category: "phin", 
+        img: "https://images.unsplash.com/photo-1628266205562-349f2b8449c2?q=80&w=800&auto=format&fit=crop" 
+    },
+    { 
+        id: 3, 
+        name: "Latte Art Hạnh Nhân", 
+        price: 49000, 
+        category: "espresso", 
+        img: "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?q=80&w=800&auto=format&fit=crop" 
+    },
+    { 
+        id: 4, 
+        name: "Cappuccino Cinnamon", 
+        price: 49000, 
+        category: "espresso", 
+        img: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=800&auto=format&fit=crop" 
+    },
+    { 
+        id: 5, 
+        name: "Cold Brew Mộc Vị", 
+        price: 55000, 
+        category: "cold_brew", 
+        img: "https://images.unsplash.com/photo-1517701604599-bb29b5c7fa5b?q=80&w=800&auto=format&fit=crop" 
+    },
+    { 
+        id: 6, 
+        name: "Hạt Arabica Cầu Đất (250g)", 
+        price: 120000, 
+        category: "packaged", 
+        img: "https://images.unsplash.com/photo-1611854779393-1b2ae9d5af1d?q=80&w=800&auto=format&fit=crop" 
     }
 ];
 
@@ -27,29 +54,21 @@ function initDB() {
     if (!localStorage.getItem(PRODUCTS_KEY)) {
         localStorage.setItem(PRODUCTS_KEY, JSON.stringify(INITIAL_PRODUCTS));
     }
-    if (!localStorage.getItem(BLOG_KEY)) {
-        localStorage.setItem(BLOG_KEY, JSON.stringify(INITIAL_POSTS));
-    }
 }
 
-// Hàm lấy dữ liệu
+// Các hàm CRUD
 function getProducts() { return JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || []; }
-function getPosts() { return JSON.parse(localStorage.getItem(BLOG_KEY)) || []; }
 
-// Hàm thêm sản phẩm (Admin)
 function addProduct(product) {
-    let products = getProducts();
+    let list = getProducts();
     product.id = Date.now();
-    products.unshift(product);
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+    list.unshift(product);
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(list));
 }
 
-// Hàm xóa sản phẩm (Admin)
 function deleteProduct(id) {
-    let products = getProducts();
-    products = products.filter(p => p.id != id);
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+    let list = getProducts().filter(p => p.id != id);
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(list));
 }
 
-// Chạy khởi tạo ngay khi file được load
-initDB();
+initDB(); // Chạy ngay khi file được nhúng
