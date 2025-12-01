@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Liên Hệ - Coffee Chain</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* CSS riêng cho trang Liên hệ */
+        .page-banner {
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .contact-container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .contact-info h3 { font-size: 1.8rem; margin-bottom: 20px; }
+        .info-item { display: flex; align-items: flex-start; margin-bottom: 20px; }
+        .info-icon { 
+            width: 40px; height: 40px; 
+            background: var(--bg-alt); 
+            color: var(--primary);
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .contact-form {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--accent);
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--primary); }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: var(--bg-light);
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .contact-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-banner" style="background-image: url('images/banner/story-banner.jpg');">
+        <div class="banner-content">
+            <h1>Liên Hệ Với Chúng Tôi</h1>
+            <p>Chúng tôi luôn lắng nghe ý kiến của bạn</p>
+        </div>
+    </div>
+
+    <div class="contact-container">
+        
+        <div class="contact-info">
+            <h3>Thông Tin Liên Lạc</h3>
+            <p style="margin-bottom: 30px;">Hãy ghé thăm cửa hàng gần nhất hoặc gửi tin nhắn cho chúng tôi nếu bạn có bất kỳ thắc mắc nào.</p>
+            
+            <div class="info-item">
+                <div class="info-icon">📍</div>
+                <div>
+                    <strong>Trụ sở chính:</strong><br>
+                    123 Đường Cà Phê, Quận 1, TP. Hồ Chí Minh
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">📞</div>
+                <div>
+                    <strong>Hotline:</strong><br>
+                    1900 123 456
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">✉️</div>
+                <div>
+                    <strong>Email:</strong><br>
+                    info@coffeechainfake.com
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            <h3>Gửi Tin Nhắn</h3>
+            <form id="contactForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="cName" placeholder="Nhập tên của bạn" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="cEmail" placeholder="Nhập email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="tel" id="cPhone" placeholder="Nhập số điện thoại">
+                </div>
+                
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <textarea id="cMsg" rows="4" placeholder="Bạn cần hỗ trợ gì?" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; border:none; cursor: pointer;">GỬI LIÊN HỆ</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/components.js"></script>
+    <script>
+        function handleSubmit(e) {
+            e.preventDefault(); // Chặn load lại trang
+
+            // 1. Lấy dữ liệu từ form
+            const name = document.getElementById('cName').value;
+            const email = document.getElementById('cEmail').value;
+            const phone = document.getElementById('cPhone').value;
+            const msg = document.getElementById('cMsg').value;
+
+            // 2. Tạo object liên hệ
+            const newContact = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                phone: phone,
+                message: msg,
+                date: new Date().toLocaleString() // Lưu ngày giờ gửi
+            };
+
+            // 3. Lấy danh sách cũ từ LocalStorage
+            let contacts = JSON.parse(localStorage.getItem('coffee_contacts')) || [];
+            
+            // 4. Thêm tin mới vào đầu danh sách
+            contacts.unshift(newContact);
+            
+            // 5. Lưu ngược lại vào LocalStorage
+            localStorage.setItem('coffee_contacts', JSON.stringify(contacts));
+
+            // 6. Thông báo và Reset form
+            alert("✅ Cảm ơn bạn! Chúng tôi đã nhận được tin nhắn.");
+            document.getElementById('contactForm').reset();
+        }
+    </script>
+</body>
+</html>
