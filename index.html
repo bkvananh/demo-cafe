@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ - Coffee Chain</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <section class="hero-banner" style="background-image: url('images/banner/hero-banner.jpg');">
+        <div class="hero-content">
+            <h1>Đậm Đà Bản Sắc Việt</h1>
+            <a href="menu.html" class="btn-primary">XEM THỰC ĐƠN NGAY</a>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="story-teaser">
+            <div class="story-text">
+                <h2 class="section-title">Câu Chuyện Của Chúng Tôi</h2>
+                <p>Khởi nguồn từ năm 1999, với tình yêu mãnh liệt dành cho hạt cà phê Việt Nam...</p>
+                <br>
+                <a href="story.html" class="btn-primary">KHÁM PHÁ THÊM</a>
+            </div>
+            <div class="story-img">
+                <img src="images/story/about-home.jpg" alt="About Us">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Món Được Yêu Thích</h2>
+        <div id="featured-grid" class="product-grid">
+            </div>
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="menu.html" class="btn-primary" style="background: transparent; border: 2px solid var(--accent); color: var(--accent);">XEM TẤT CẢ MENU</a>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        // Logic riêng cho trang chủ
+        const products = getProducts();
+        const featured = products.slice(0, 4); // Lấy 4 món đầu
+        const grid = document.getElementById('featured-grid');
+        
+        grid.innerHTML = featured.map(p => `
+            <div class="product-card">
+                <img src="${p.img}" alt="${p.name}">
+                <h4>${p.name}</h4>
+                <span class="price">${p.price.toLocaleString()} đ</span>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html>
