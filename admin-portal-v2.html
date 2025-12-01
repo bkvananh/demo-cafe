@@ -5,32 +5,27 @@
     <title>Admin Login</title>
     <style>
         body { background: #E9DFC8; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; text-align: center; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; width: 300px; text-align: center; }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
         button { width: 100%; padding: 10px; background: #582F0E; color: white; border: none; font-weight: bold; cursor: pointer; }
-        button:hover { background: #7F4F24; }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h2>Quản Trị Viên</h2>
-        <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Vui lòng đăng nhập</p>
+        <h2>Coffee Chain Admin</h2>
+        <p>Hệ thống quản lý nội bộ</p>
         <form onsubmit="event.preventDefault(); handleLogin();">
-            <input type="text" id="user" placeholder="Username (admin)">
-            <input type="password" id="pass" placeholder="Password (123)">
+            <input type="text" id="u" placeholder="Username (admin)">
+            <input type="password" id="p" placeholder="Password (123)">
             <button type="submit">Đăng Nhập</button>
         </form>
     </div>
     <script>
         function handleLogin() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-            if(u === 'admin' && p === '123') {
+            if(document.getElementById('u').value === 'admin' && document.getElementById('p').value === '123') {
                 localStorage.setItem('isAdmin', 'true');
                 window.location.href = 'admin-products.html';
-            } else {
-                alert('Sai thông tin!');
-            }
+            } else { alert('Sai thông tin!'); }
         }
     </script>
 </body>
