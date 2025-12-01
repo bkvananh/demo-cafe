@@ -21,12 +21,52 @@
         </form>
     </div>
     <script>
-        function handleLogin() {
-            if(document.getElementById('u').value === 'admin' && document.getElementById('p').value === '123') {
-                localStorage.setItem('isAdmin', 'true');
-                window.location.href = 'admin-dashboard.html';
-            } else { alert('Sai thông tin!'); }
+        <script>
+    function handleLogin() {
+        // 1. Lấy giá trị và cắt khoảng trắng thừa (trim)
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        
+        const u = usernameInput.value.trim();
+        const p = passwordInput.value.trim();
+
+        // 2. CHECK 1: Kiểm tra bỏ trống
+        if (u === "" || p === "") {
+            alert("⚠️ Vui lòng điền đầy đủ Tên đăng nhập và Mật khẩu!");
+            
+            // Focus vào ô nào đang trống để nhắc user
+            if(u === "") usernameInput.focus();
+            else passwordInput.focus();
+            
+            return; // Dừng lại, không chạy tiếp
         }
+
+        // 3. CHECK 2: Kiểm tra đúng sai (admin / 123)
+        if (u === 'admin' && p === '123') {
+            // Đúng -> Lưu token và chuyển trang
+            localStorage.setItem('isAdmin', 'true');
+            
+            // Hiệu ứng chuyển trang
+            document.querySelector('.btn-login').textContent = "Đang vào...";
+            document.querySelector('.btn-login').style.background = "#4CAF50"; // Màu xanh thành công
+            
+            setTimeout(() => {
+                window.location.href = 'admin-products.html';
+            }, 500);
+            
+        } else {
+            // Sai -> Báo lỗi
+            alert('❌ Sai tên đăng nhập hoặc mật khẩu!');
+            passwordInput.value = ''; // Xóa pass để nhập lại
+            passwordInput.focus();
+        }
+    }
+
+    // Tự động vào dashboard nếu đã đăng nhập từ trước
+    if (localStorage.getItem('isAdmin') === 'true') {
+        window.location.href = 'admin-products.html';
+    }
+</script>
     </script>
 </body>
 </html>
