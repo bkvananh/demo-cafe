@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thực Đơn - Coffee Chain</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="section-title">Thực Đơn</h2>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterMenu('all')">Tất cả</button>
+            <button class="filter-btn" onclick="filterMenu('phin')">Cà Phê Phin</button>
+            <button class="filter-btn" onclick="filterMenu('espresso')">Espresso</button>
+            <button class="filter-btn" onclick="filterMenu('cold_brew')">Cold Brew</button>
+        </div>
+
+        <div id="menu-grid" class="product-grid">
+            </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        const allProducts = getProducts();
+        const grid = document.getElementById('menu-grid');
+        const btns = document.querySelectorAll('.filter-btn');
+
+        function render(data) {
+            grid.innerHTML = data.map(p => `
+                <div class="product-card">
+                    <img src="${p.img}" alt="${p.name}">
+                    <h4>${p.name}</h4>
+                    <span class="price">${p.price.toLocaleString()} đ</span>
+                    <a href="#" onclick="alert('Đã thêm vào giỏ hàng (Giả lập)!')" class="btn-primary" style="padding: 5px 15px; font-size: 12px; margin-bottom: 15px;">ĐẶT NGAY</a>
+                </div>
+            `).join('');
+        }
+
+        function filterMenu(cat) {
+            // Update UI buttons
+            btns.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter logic
+            if(cat === 'all') render(allProducts);
+            else render(allProducts.filter(p => p.category === cat));
+        }
+
+        // Init
+        render(allProducts);
+    </script>
+</body>
+</html>
