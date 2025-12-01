@@ -2,84 +2,30 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng Nhập Quản Trị - Coffee Chain</title>
+    <title>Đăng Nhập Admin</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body { background-color: var(--bg-alt); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(88, 47, 14, 0.1); width: 100%; max-width: 400px; text-align: center; border-top: 5px solid var(--accent); }
-        .login-logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 10px; font-weight: bold; }
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 8px; color: var(--primary); font-weight: bold; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button.btn-login { width: 100%; padding: 14px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button.btn-login:hover { background-color: var(--accent); }
-        
-        /* Nút cứu hộ nhỏ xíu ở góc */
-        .rescue-btn { margin-top: 20px; font-size: 12px; color: #999; cursor: pointer; text-decoration: underline; background: none; border: none; }
-    </style>
+    <style>body { display:flex; justify-content:center; align-items:center; height:100vh; background: var(--bg-light); }</style>
 </head>
 <body>
-
-    <div class="login-card">
-        <div class="login-logo">COFFEE CHAIN</div>
-        <p style="color:#666; margin-bottom:30px;">Hệ thống quản lý nội bộ</p>
-
-        <form onsubmit="event.preventDefault(); handleLogin();">
-            <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" id="username" placeholder="admin" required autofocus>
-            </div>
-
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="password" placeholder="123" required>
-            </div>
-
-            <button type="submit" class="btn-login">ĐĂNG NHẬP</button>
-        </form>
-        
-        <button onclick="emergencyReset()" class="rescue-btn">Gặp lỗi? Bấm vào đây để Reset hệ thống</button>
-        <br>
-        <a href="index.html" style="display:block; margin-top:15px; font-size:14px; color:#582F0E;">← Quay về Trang chủ</a>
+    <div style="background:white; padding:40px; border-radius:8px; width:350px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+        <h2>COFFEE CHAIN</h2>
+        <p style="margin-bottom:20px; color:#666;">Cổng quản trị viên</p>
+        <input type="text" id="u" placeholder="admin" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd;">
+        <input type="password" id="p" placeholder="123" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd;">
+        <button onclick="login()" class="btn-primary" style="width:100%;">ĐĂNG NHẬP</button>
+        <button onclick="resetSystem()" style="margin-top:20px; background:none; border:none; color:#999; text-decoration:underline; cursor:pointer;">Gặp lỗi? Reset hệ thống</button>
     </div>
-
     <script>
-        // --- LOGIC ĐĂNG NHẬP ĐƠN GIẢN HÓA ---
-        
-        function handleLogin() {
-            const u = document.getElementById('username').value.trim();
-            const p = document.getElementById('password').value.trim();
-
-            // Kiểm tra cứng (Hardcode) - Cách chắc chắn nhất
-            if (u === 'admin' && p === '123') {
-                // Set token
+        function login() {
+            if(document.getElementById('u').value === 'admin' && document.getElementById('p').value === '123') {
                 localStorage.setItem('isAdmin', 'true');
-                
-                // Chuyển trang ngay lập tức
-                alert('✅ Đăng nhập thành công!');
                 window.location.href = 'admin-products.html';
-            } else {
-                alert('❌ Sai thông tin! (Gợi ý: admin / 123)');
-                document.getElementById('password').value = '';
-            }
+            } else alert('❌ Sai thông tin! (admin / 123)');
         }
-
-        // Hàm cứu hộ: Xóa sạch dữ liệu cũ để tránh lỗi kẹt cache
-        function emergencyReset() {
-            if(confirm("Bạn có chắc muốn Reset toàn bộ dữ liệu (Menu, Blog, Login) về mặc định không?")) {
-                localStorage.clear();
-                alert("Đã reset! Hãy thử đăng nhập lại với: admin / 123");
-                location.reload();
-            }
+        function resetSystem() {
+            if(confirm("Reset toàn bộ dữ liệu về ban đầu?")) { localStorage.clear(); location.reload(); }
         }
-
-        // Tự động vào nếu đã đăng nhập (nhưng phải kiểm tra kỹ hơn)
-        if (localStorage.getItem('isAdmin') === 'true') {
-            // Cho phép vào thẳng, nhưng log ra console để debug
-            console.log("Auto login active");
-            window.location.href = 'admin-products.html';
-        }
+        if(localStorage.getItem('isAdmin')==='true') window.location.href='admin-products.html';
     </script>
-
 </body>
 </html>
