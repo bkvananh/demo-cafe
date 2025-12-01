@@ -2,28 +2,18 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Tin Tức</title>
+    <title>Câu Chuyện</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h2 class="section-title">Tin Tức & Sự Kiện</h2>
-        <div id="blog-grid" style="display:grid; grid-template-columns:1fr; gap:30px; max-width:800px; margin:0 auto;"></div>
+    <div style="height:400px; background:url('https://images.unsplash.com/photo-1442512595331-e89e7385a861?q=80&w=1920') center/cover; display:flex; align-items:center; justify-content:center;">
+        <h1 style="color:white; font-size:4rem;">Về Chúng Tôi</h1>
     </div>
-    <script src="js/db.js"></script>
+    <div class="container" style="max-width:800px; text-align:justify;">
+        <p>Bắt đầu từ năm 1999, Coffee Chain mang trong mình sứ mệnh...</p>
+        <br>
+        <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1000" style="width:100%; border-radius:8px;">
+    </div>
     <script src="js/components.js"></script>
-    <script>
-        const posts = getData(BLOG_KEY);
-        document.getElementById('blog-grid').innerHTML = posts.length ? posts.map(p => `
-            <div style="display:flex; gap:20px; background:white; padding:20px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
-                <img src="${p.img}" style="width:200px; height:150px; object-fit:cover;">
-                <div>
-                    <small style="color:#888;">📅 ${p.date}</small>
-                    <h3>${p.title}</h3>
-                    <p>${p.desc}</p>
-                </div>
-            </div>
-        `).join('') : '<p>Chưa có bài viết.</p>';
-    </script>
 </body>
 </html>
