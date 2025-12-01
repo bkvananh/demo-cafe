@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    
     <meta charset="UTF-8">
     <title>Hộp Thư - Admin</title>
     <link rel="stylesheet" href="css/style.css">
@@ -33,7 +34,14 @@
         .msg-text { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #666; }
     </style>
     <script>
-        if(localStorage.getItem('isAdmin') !== 'true') window.location.href = 'admin-portal-v2.html';
+        // Kiểm tra xem đã đăng nhập chưa
+        const isLogin = localStorage.getItem('isAdmin');
+
+        // Nếu chưa có token 'isAdmin' hoặc token không phải 'true'
+        if (!isLogin || isLogin !== 'true') {
+            alert('⛔ Bạn không có quyền truy cập! Vui lòng đăng nhập.');
+            window.location.href = 'admin-portal-v2.html'; // Đá về trang đăng nhập
+        }
     </script>
 </head>
 <body>
