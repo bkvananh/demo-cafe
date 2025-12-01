@@ -11,27 +11,59 @@
     <div id="admin-sidebar"></div>
     <div id="admin-content">
         <h2>Hộp Thư Khách Hàng</h2>
+        
         <table class="admin-table">
-            <thead><tr><th>Tên</th><th>Liên hệ</th><th>Nội dung</th><th>Ngày</th><th>Xóa</th></tr></thead>
+            <thead>
+                <tr>
+                    <th width="150">Ngày gửi</th>
+                    <th width="150">Họ tên</th>
+                    <th width="150">Liên hệ</th>
+                    <th>Nội dung</th>
+                    <th width="80">Xóa</th>
+                </tr>
+            </thead>
             <tbody id="list"></tbody>
         </table>
-        <p id="empty" style="text-align:center; margin-top:20px; display:none;">Chưa có tin nhắn.</p>
+        
+        <p id="empty" style="text-align:center; margin-top:20px; display:none; color:#888;">Hộp thư trống.</p>
     </div>
+
     <script src="js/db.js"></script>
     <script src="js/components.js"></script>
     <script>
-        const list = getData(CONTACTS_KEY);
-        if(!list.length) document.getElementById('empty').style.display = 'block';
-        document.getElementById('list').innerHTML = list.map(c => `
-            <tr>
-                <td>${c.name}</td>
-                <td>${c.contact}</td>
-                <td>${c.message}</td>
-                <td>${c.date}</td>
-                <td><button onclick="del(${c.id})" style="color:red; border:none; background:none; cursor:pointer;">Xóa</button></td>
-            </tr>`).join('');
+        function renderMessages() {
+            // 1. Lấy dữ liệu tin nhắn từ LocalStorage
+            const list = getData(CONTACTS_KEY);
+            
+            // 2. Kiểm tra nếu không có tin nhắn
+            if(!list || list.length === 0) {
+                document.getElementById('empty').style.display = 'block';
+                return;
+            }
+
+            // 3. Vẽ ra bảng HTML
+            document.getElementById('list').innerHTML = list.map(c => `
+                <tr>
+                    <td><small>${c.date}</small></td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.contact}</td>
+                    <td>${c.message}</td>
+                    <td>
+                        <button onclick="del(${c.id})" style="color:red; border:none; background:none; cursor:pointer;">Xóa</button>
+                    </td>
+                </tr>`).join('');
+        }
         
-        function del(id) { if(confirm('Xóa?')) { deleteData(CONTACTS_KEY, id); location.reload(); } }
+        // Hàm xóa tin nhắn
+        function del(id) { 
+            if(confirm('Bạn có chắc muốn xóa tin nhắn này?')) { 
+                deleteData(CONTACTS_KEY, id); 
+                location.reload(); 
+            } 
+        }
+
+        // Chạy hàm hiển thị ngay khi mở trang
+        renderMessages();
     </script>
 </body>
 </html>
